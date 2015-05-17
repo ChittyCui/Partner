@@ -1,0 +1,294 @@
+Enter file contents here
+package ImageFive;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+
+
+
+
+public class MainChess extends java.awt.Frame implements java.awt.event.MouseListener{
+
+    //窗体宽度
+    public static final int WINDOW_WIDTH = 650;
+    //窗体高度
+    public static final int WINDOW_HEIGHT = 580;
+    //窗体刷新率
+    public static final int REFRESH_RATE = 50;
+    Image offScreenImage = null;
+    //屏幕画布
+	static java.awt.Graphics g = null;
+    //棋盘图片
+	static javax.swing.ImageIcon qipan = new javax.swing.ImageIcon("images/qipan.jpg");
+	//黑子图片
+	static javax.swing.ImageIcon black = new javax.swing.ImageIcon("images/black.png");
+	//白子图片
+	static javax.swing.ImageIcon white = new javax.swing.ImageIcon("images/white.png");
+	//游戏结束图片
+	static javax.swing.ImageIcon over = new javax.swing.ImageIcon("images/gameOver.png");
+	//棋子数组
+	static int[][] chessArray = new int[16][16];//0无 1 白子  2黑子
+	//左顶角的坐标
+	static int Left_X = 2;
+	static int Left_Y = 42;
+    //我 方所拿棋子颜色
+	static int own = 2;
+    //是否人人对战
+	static boolean MantoMan = false;
+	//点击方
+	private boolean Click = false ;
+	
+	//判断方法
+	static Judge judge = new Judge();
+    static boolean GameBegin = false;
+	
+	
+	
+	
+	
+	
+	public static void main(String[] args) {
+		MainChess chess = new MainChess();
+		chess.showUI();
+		chess.Init();
+		chess.addMouseListener(chess);
+		
+		
+	}
+
+	
+	
+	public void paint(java.awt.Graphics g){
+		drawIt();
+	}
+	
+	
+	/**
+	 * 画出棋子
+	 */
+	public static void drawIt(){
+		//填充背景黑色
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+		
+		
+		//画出棋盘
+		g.drawImage(qipan.getImage(), 0, 40, null);
+		//画出棋子
+		for (int i=0; i<chessArray[0].length; i++){
+			for (int j=0; j<chessArray[0].length; j++){
+				if(chessArray[i][j]==1){//重画白子
+					g.drawImage(white.getImage(), Left_X+i*35, Left_Y+j*35, null);
+				}
+				if(chessArray[i][j]==2){//重画黑子
+					g.drawImage(black.getImage(), Left_X+i*35, Left_Y+j*35, null);
+				}
+			}
+		}
+		//边栏信息
+		g.setColor(Color.WHITE);
+		g.drawString("当前状态：", 550, 100);
+		if(MantoMan==true){
+			g.drawString("人人对战", 560, 120);
+		}else{
+			g.drawString("人机对战", 560, 120);
+		}
+		g.drawString("玩家执子：", 550, 200);
+		if(own==2){
+			g.drawString("黑子", 560, 220);
+		}else{
+			g.drawString("白子", 560, 220);
+		}
+		
+		
+		if(judge.judgeWiner()==true && GameBegin==true){//游戏结束了
+			GameBegin=false;
+			g.drawImage(over.getImage(), 100, 150, null);
+		}
+	}
+	
+	  
+	/**
+	 * 初始化操作
+	 */
+	public static void Init(){
+		//棋盘清空
+		for (int i=0; i<chessArray[0].length; i++){
+			for (int j=0; j<chessArray[0].length; j++){
+				chessArray[i][j]=0;
+			}
+		}
+	}
+	
+	
+
+	
+	/**
+	 * 显示窗体
+	 */
+	public void showUI(){
+		this.setTitle("我的五子棋");
+		this.setLocation(200, 100);
+		this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+	       this.setResizable(false);
+	        this.addWindowListener(
+	            new WindowAdapter() {
+	                public void windowClosing(WindowEvent e) {
+	                    setVisible(false);
+	                    System.exit(0);
+	                }
+	            }
+	        );
+	//    this.setBackground(Color.BLACK);
+	    this.setMenuBar(getMB());
+	    
+		this.setVisible(true);
+		g=this.getGraphics();
+	}
+	
+	
+	/**
+	 * 菜单栏
+	 * @return
+	 */
+	public MenuBar getMB(){//创建菜单栏
+		MenuBar mb = new MenuBar();
+		
+		Menu file = new Menu("文件");//文件菜单
+		MenuItem open = new MenuItem("打开");//打开菜单项
+		file.add(open);
+		MenuItem save = new MenuItem("保存");//保存菜单项
+		file.add(save);
+		file.addSeparator();
+		MenuItem exit = new MenuItem("退出");//退出菜单项
+		file.add(exit);
+		
+		
+		Menu game = new Menu("游戏");
+		
+		MenuItem begin = new MenuItem("开始游戏");//开始游戏菜单项
+		game.add(begin);
+		game.addSeparator();
+		MenuItem mantoman = new MenuItem("人人对战");
+		game.add(mantoman);
+		MenuItem mantocpu = new MenuItem("人机对战");
+		game.add(mantocpu);
+		
+		
+		Menu have = new Menu("执子颜色");
+		MenuItem haveblcak = new MenuItem("黑色");
+		have.add(haveblcak);
+		MenuItem havewhite = new MenuItem("白色");
+		have.add(havewhite);
+		
+		game.addSeparator();
+		game.add(have);
+		
+		
+		Menu help = new Menu("帮助");//帮助菜单
+		MenuItem about = new MenuItem("关于");//打开菜单项
+		help.add(about);
+		
+		mb.add(file);
+		mb.add(game);
+		mb.add(help);
+		
+		MenuAction al = new MenuAction();
+		open.addActionListener(al);
+		save.addActionListener(al);
+		about.addActionListener(al);
+		exit.addActionListener(al);
+		begin.addActionListener(al);
+		mantoman.addActionListener(al);
+		mantocpu.addActionListener(al);
+		haveblcak.addActionListener(al);
+		havewhite.addActionListener(al);
+		return mb;
+	}
+
+
+
+
+	/**
+	 * 鼠标点击事件
+	 */
+	public void mouseClicked(MouseEvent e) {
+		if(GameBegin==false)
+			return ;
+		//得到点击坐标
+		int x = e.getX()-15;
+		int y = e.getY()-15;
+		
+		if(MantoMan == true){//人人对战
+			for (int i=0; i<chessArray[0].length; i++){
+				for (int j=0; j<chessArray[0].length; j++){
+					int distance = (x-Left_X-i*35) * (x-Left_X-i*35) + (y-Left_Y-j*35) * (y-Left_Y-j*35);
+					if(distance < 20*20 && chessArray[i][j]==0){
+						if(Click==false)
+							chessArray[i][j]=1;
+						else 
+							chessArray[i][j]=2;
+						Click = !Click;
+						drawIt();
+						return ;
+					}
+				}
+			}
+		}
+		
+		
+		if(MantoMan == false){//人机对战
+			boolean flag=false;
+			//System.out.println("X:"+x+"Y"+y);
+			for (int i=0; i<chessArray[0].length; i++){
+				for (int j=0; j<chessArray[0].length; j++){
+					int distance =(x-Left_X-i*35) * (x-Left_X-i*35) + (y-Left_Y-j*35) * (y-Left_Y-j*35);
+					
+					if(distance<20*20 && chessArray[i][j]==0){
+					//	System.out.println(distance);
+						chessArray[i][j]=own;
+						flag=true;
+						drawIt();
+					}
+				}
+			}
+			if(flag){//玩家下子了
+				Rober computer = new Rober();
+				computer.doit();
+				drawIt();
+			}
+		}
+		
+	}
+
+
+
+
+	public void mouseEntered(MouseEvent e) {	
+	}
+
+
+
+	public void mouseExited(MouseEvent e) {
+	}
+
+
+
+	public void mousePressed(MouseEvent e) {
+	}
+
+
+
+	public void mouseReleased(MouseEvent e) {
+	}
+	
+	
+}
