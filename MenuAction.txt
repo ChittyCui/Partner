@@ -1,0 +1,109 @@
+package ImageFive;
+
+import java.awt.event.ActionEvent;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+
+
+public class MenuAction implements java.awt.event.ActionListener{
+
+	//游戏开始图片
+	javax.swing.ImageIcon begin = new javax.swing.ImageIcon("images/gameBegin.png");
+	public void actionPerformed(ActionEvent e) {
+		String common = e.getActionCommand();
+		if("开始游戏".equals(common)){//游戏开始
+			//加载开始图片
+			MainChess.Init();
+			MainChess.drawIt();
+			MainChess.g.drawImage(begin.getImage(), 100, 150, null);
+	//		System.out.println(" 进来了~");
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			MainChess.drawIt();
+			MainChess.GameBegin = true;//游戏开始
+		}
+		if("打开".equals(common)){
+			
+			javax.swing.JFileChooser jfc = new javax.swing.JFileChooser("打开文件");//打开文件对话框
+			jfc.showOpenDialog(null);
+			java.io.File file = jfc.getSelectedFile();//得到打开的文件
+			if(file.exists()){//如果文件存在
+				try {
+					//创建文件输入流
+					java.io.FileInputStream fin = new java.io.FileInputStream(file);
+					//包装成为data
+					java.io.DataInputStream din = new java.io.DataInputStream(fin);
+					
+					for (int i=1;i<10;i++){
+						for (int j=1;j<10;j++){
+							try {
+								MainChess.chessArray[i][j]=din.readInt();
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}
+
+					
+					
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+			}
+					
+		}if("保存".equals(common)){
+			javax.swing.JFileChooser jfc1 = new javax.swing.JFileChooser("保存文件");//保存文件对话框
+			jfc1.showSaveDialog(null);
+			java.io.File file1 = jfc1.getSelectedFile();//得到保存的文件
+
+				
+					//创建文件输出流
+					java.io.FileOutputStream fos = null;
+					try {
+						fos = new java.io.FileOutputStream(file1);
+					} catch (FileNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					//包装成为data
+					java.io.DataOutputStream dos = new java.io.DataOutputStream(fos);
+					for (int i=1;i<10;i++){
+						for (int j=1;j<10;j++){
+							try {
+								dos.writeInt(MainChess.chessArray[i][j]);
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}
+
+					
+		}if("关于".equals(common)){
+			javax.swing.JOptionPane.showMessageDialog(null, "五子棋V1.0", "关于", 3);
+		}if("退出".equals(common)){
+			System.exit(0);
+		}if("人机对战".equals(common)){
+			MainChess.MantoMan=false;
+			MainChess.drawIt();
+		}if("人人对战".equals(common)){
+			MainChess.MantoMan=true;
+			MainChess.drawIt();
+		}if("黑色".equals(common)){
+			MainChess.own = 2;
+			MainChess.drawIt();
+		}if("白色".equals(common)){
+			MainChess.own = 1;
+			MainChess.drawIt();
+		}
+		
+	}
+}
