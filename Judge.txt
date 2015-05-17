@@ -1,0 +1,123 @@
+# Partner
+package ImageFive;
+
+public class Judge {
+	//游戏开始图片
+	javax.swing.ImageIcon blackwin = new javax.swing.ImageIcon("images/BlackWin.png");
+	javax.swing.ImageIcon whitewin = new javax.swing.ImageIcon("images/WhiteWin.png");
+
+	
+	public boolean judgeWiner(){
+		for (int i=0; i<15; i++){
+			for (int j=0; j<15; j++){
+				if(MainChess.chessArray[i][j] != 0){
+					if(judgeLine(i,j)){//判断行五只相连
+						return true;
+					}
+					if(judgeCol(i,j)){//判断列五只相连
+						return true;
+					}
+					if(judgeZXie(i,j)){
+						return true;
+					}
+					if(judgeYXie(i,j)){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	 public boolean judgeLine(int x,int y){//判断x行是否五只相连
+	    	int color = MainChess.chessArray[x][y];
+	    	int count = 0;
+		    	for (int i=y; i<=y+5; i++){
+		    		if(i<0) return false;
+		    		if(i>15) return false;
+		    		if(MainChess.chessArray[x][i] == color){
+		    			count++;
+		    			if(count==5){
+		    				if(color==1){
+		    					MainChess.g.drawImage(whitewin.getImage(), 100, 300, null);
+		    					return true ;
+		    				}else{
+		    					MainChess.g.drawImage(blackwin.getImage(), 100, 300, null);
+		    					return true ;
+		    				}
+		    			}
+		    		}
+		    		else{
+		    			 break;
+		    		}
+		    	}
+			return false;
+	    }
+	    
+	    
+	    public boolean judgeCol(int x,int y){//判断x列是否五只相连
+	    	int color = MainChess.chessArray[x][y];
+	    	int count = 0;
+		    	for (int i=x; i<=x+5; i++){
+		    		if(i<0) return false;
+		    		if(i>15) return false;
+		    		if(MainChess.chessArray[i][y] == color){
+		    			count++;
+		    			if(count == 5){
+		    				if(color == 1){
+		    					MainChess.g.drawImage(whitewin.getImage(), 100, 300, null);
+		    					return true ;
+		    				}else{
+		    					MainChess.g.drawImage(blackwin.getImage(), 100, 300, null);
+		    					return true ;
+		    				}
+		    			}
+		    		}
+		    		else{
+		    			 break;
+		    		}
+		    	}
+			return false;
+	    }
+	    
+	    
+	    public boolean judgeZXie(int x,int y){//判断左边斜线
+	    	int color = MainChess.chessArray[x][y];
+	    	
+	    	
+	    	for (int i=1; i<=4; i++){
+	    		if(x+i>15) return false ;
+	    		if(y+i>15) return false ;
+	    		if(MainChess.chessArray[x+i][y+i] != color) return false;
+	    	}
+			if(color == 1){
+				MainChess.g.drawImage(whitewin.getImage(), 100, 300, null);
+				return true ;
+			}else{
+				MainChess.g.drawImage(blackwin.getImage(), 100, 300, null);
+				return true ;
+			}
+	    }
+	    
+	    
+	    
+	    public boolean judgeYXie(int x,int y){//判断右边斜线
+	    	int color = MainChess.chessArray[x][y];
+	    	
+	    	for (int i=1; i<=4; i++){
+	    		if(x-i<0) return false ;
+	    		if(y+i>15) return false ;
+	    		if(MainChess.chessArray[x-i][y+i] != color) return false;
+	    	}
+			if(color == 1){
+				MainChess.g.drawImage(whitewin.getImage(), 100, 300, null);
+				return true ;
+			}else{
+				MainChess.g.drawImage(blackwin.getImage(), 100, 300, null);
+				return true ;
+			}
+	    	
+	    }  
+}
