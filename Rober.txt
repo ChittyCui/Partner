@@ -1,0 +1,17 @@
+package ImageFive;
+
+public class Rober {
+	
+	
+	public void doit(){
+		while(true){
+			int x = (int) (Math.random() * 1000) % 15; 
+			int y = (int) (Math.random() * 1000) % 15; 
+			if(MainChess.chessArray[x][y] == 0)
+				MainChess.chessArray[x][y] = 3 - MainChess.own;
+				return ;
+		}
+
+	}
+	
+}
